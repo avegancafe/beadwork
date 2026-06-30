@@ -39,9 +39,11 @@ See [`.claude/patterns/README.md`](.claude/patterns/README.md) for the conventio
 
 ## What this repo is
 
-Kyle's personal Claude Code **plugin**: beads (`bd`) issue-tracking skills plus a
-parent-epic-status hook. Distributed via the private
-`avegancafe/avegancafe-marketplace` and installed with
+Kyle's **grab-bag** Claude Code plugin — a portable catch-all for the personal
+skills and hooks he carries across machines, with no single theme. Today that's
+beads (`bd`) tooling plus a parent-epic-status hook, but anything personal that
+lacks a more specific home (e.g. the `kitchen-brigade` plugin) belongs here.
+Distributed via the private `avegancafe/avegancafe-marketplace` and installed with
 `/plugin install avegancafe@avegancafe-marketplace`.
 
 ## Layout
