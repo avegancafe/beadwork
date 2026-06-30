@@ -1,0 +1,13 @@
+{
+  "name": "avegancafe",
+  "version": "1.0.0",
+  "description": "Kyle's personal Claude Code toolkit: beads (bd) issue-tracking workflows — rapid capture/triage logging, tight bead titles, and a concurrency-aware posture for working alongside other agent sessions. Ships a PostToolUse hook that surfaces parent-epic status after bd state changes.",
+  "author": {
+    "name": "Kyle Holzinger",
+    "url": "https://github.com/avegancafe"
+  },
+  "homepage": "https://github.com/avegancafe/avegancafe-plugin",
+  "repository": "https://github.com/avegancafe/avegancafe-plugin",
+  "license": "MIT",
+  "keywords": ["beads", "bd", "issue-tracking", "workflow", "concurrency"]
+}
