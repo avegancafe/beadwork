@@ -1,7 +1,7 @@
 {
   "name": "avegancafe",
-  "version": "1.0.3",
-  "description": "Kyle's portable grab-bag of personal Claude Code tooling — a catch-all home for the skills and hooks he carries from machine to machine. Currently: beads (bd) issue-tracking workflows (rapid capture/triage logging, tight bead titles) plus a PostToolUse hook that surfaces parent-epic status after bd state changes.",
+  "version": "1.0.4",
+  "description": "My portable grab-bag of personal Claude Code tooling — a catch-all home for the skills and hooks I carry from machine to machine. Currently: beads (bd) issue-tracking workflows (rapid capture/triage logging, tight bead titles) plus a PostToolUse hook that surfaces parent-epic status after bd state changes.",
   "author": {
     "name": "Kyle Holzinger",
     "url": "https://github.com/avegancafe"

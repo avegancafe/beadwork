@@ -39,8 +39,8 @@ See [`.claude/patterns/README.md`](.claude/patterns/README.md) for the conventio
 
 ## What this repo is
 
-Kyle's **grab-bag** Claude Code plugin — a portable catch-all for the personal
-skills and hooks he carries across machines, with no single theme. Today that's
+My **grab-bag** Claude Code plugin — a portable catch-all for the personal
+skills and hooks I carry across machines, with no single theme. Today that's
 beads (`bd`) tooling plus a parent-epic-status hook, but anything personal that
 lacks a more specific home (e.g. the `kitchen-brigade` plugin) belongs here.
 Distributed via the private `avegancafe/avegancafe-marketplace` and installed with
@@ -77,5 +77,5 @@ README.md                         # User-facing docs
 
 ## Provenance
 
-Extracted from Kyle's `~/.claude/` (the Juliet dotfiles). These skills/hook were
+Extracted from my `~/.claude/` (the Juliet dotfiles). These skills/hook were
 moved here out of the dotfiles so they're installable as a plugin.

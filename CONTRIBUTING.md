@@ -1,6 +1,6 @@
 # Contributing to avegancafe
 
-This is Kyle's personal Claude Code plugin (beads workflows + a parent-epic hook),
+This is my personal Claude Code plugin (beads workflows + a parent-epic hook),
 distributed through the `avegancafe/avegancafe-marketplace`.
 
 ## Golden rule: bump the version

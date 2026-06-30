@@ -1,6 +1,6 @@
 # avegancafe
 
-Kyle's portable **grab-bag** of personal Claude Code tooling — a catch-all home for the skills and hooks he carries from machine to machine. Anything personal that doesn't have a more specific home lands here.
+My portable **grab-bag** of personal Claude Code tooling — a catch-all home for the skills and hooks I carry from machine to machine. Anything personal that doesn't have a more specific home lands here.
 
 Today it holds [beads](https://github.com/steveyegge/beads) (`bd`) issue-tracking workflows and a parent-epic hook.
 
