@@ -1,15 +1,54 @@
-# CLAUDE.md — avegancafe plugin
+# CLAUDE.md — avegancafe
 
 Guidance for Claude Code when working **on this repository** (developing/maintaining the plugin), not when using it.
 
+---
+
+## ⚠️ CRITICAL — read before any change
+
+1. **Bump the version on EVERY change to this repo.** Edit `version` in
+   [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) (semver), add a
+   matching entry to [`CHANGELOG.md`](CHANGELOG.md), **and** update the
+   `avegancafe` entry's `version` in the marketplace repo
+   (`avegancafe/avegancafe-marketplace` → `.claude-plugin/marketplace.json`).
+   These three must always agree. No "trivial" exception — docs-only changes bump
+   the patch version too.
+2. **`hooks/hooks.json` is auto-loaded.** Do NOT also reference it from
+   `plugin.json` (`manifest.hooks`) — that triggers a "Duplicate hooks file
+   detected" error.
+3. **The hook must stay fail-safe and executable.**
+   `hooks/bd-epic-parent-reminder.sh` must exit 0 silently for non-`bd` commands,
+   missing `bd`/`jq`, or repos without beads — it must never block the Bash tool.
+   Keep it `chmod +x`. Paths use `${CLAUDE_PLUGIN_ROOT}`, never `$HOME/.claude/...`.
+
+---
+
+## 📚 Pattern library — `.claude/patterns/`
+
+Accumulated, durable patterns for this repo live in
+[`.claude/patterns/`](.claude/patterns/). **This section is their table of
+contents — keep it in sync whenever a pattern file is added, renamed, or removed.**
+
+| Pattern | What it covers |
+|---------|----------------|
+| _(none yet)_ | Add patterns via the `/learn` skill, or by hand into `.claude/patterns/<slug>.md`, then list them here. |
+
+See [`.claude/patterns/README.md`](.claude/patterns/README.md) for the convention.
+
+---
+
 ## What this repo is
 
-Kyle's personal Claude Code **plugin**: beads (`bd`) issue-tracking skills plus a parent-epic-status hook. Distributed via the private `avegancafe/avegancafe-marketplace` and installed with `/plugin install avegancafe@avegancafe-marketplace`.
+Kyle's personal Claude Code **plugin**: beads (`bd`) issue-tracking skills plus a
+parent-epic-status hook. Distributed via the private
+`avegancafe/avegancafe-marketplace` and installed with
+`/plugin install avegancafe@avegancafe-marketplace`.
 
 ## Layout
 
 ```
 .claude-plugin/plugin.json        # Manifest (name, version, metadata). REQUIRED.
+.claude/patterns/                 # Durable repo patterns (see ToC above)
 skills/beads-capture-logging/     # Capture/triage logging workflow
 skills/writing-bead-titles/       # Tight bead-title guidance
 skills/dinner-rush/               # Concurrency-aware posture
@@ -20,13 +59,11 @@ README.md                         # User-facing docs
 
 `.claude-plugin/` holds **only** manifests — never put skills/hooks inside it.
 
-## Rules when editing
+## Editing rules
 
-- **`hooks/hooks.json` is auto-loaded** by Claude Code. Do NOT also reference it from `plugin.json` (`manifest.hooks`) — that triggers a "Duplicate hooks file detected" error.
-- **Hook paths use `${CLAUDE_PLUGIN_ROOT}`** (e.g. `"${CLAUDE_PLUGIN_ROOT}/hooks/bd-epic-parent-reminder.sh"`), never `$HOME/.claude/...`.
-- **Keep the hook script executable** (`chmod +x hooks/bd-epic-parent-reminder.sh`) and **fail-safe**: it must exit 0 silently for non-`bd` commands, missing `bd`/`jq`, or repos without beads. Never let it block the Bash tool.
-- **Skill frontmatter `description:`** is the trigger contract — it's how the skill gets matched. Edit it deliberately; keep it specific about *when* to use the skill.
-- **Bump `version` in `.claude-plugin/plugin.json`** on meaningful changes and update the matching `version` for `avegancafe` in the marketplace repo's `marketplace.json`. Use semver.
+- **Skill frontmatter `description:`** is the trigger contract — it's how the skill
+  gets matched. Edit it deliberately; keep it specific about *when* to use the skill.
+- After any change, follow the version-bump rule above.
 
 ## Testing changes locally
 
@@ -39,4 +76,5 @@ README.md                         # User-facing docs
 
 ## Provenance
 
-Extracted from Kyle's `~/.claude/` (the Juliet dotfiles). These skills/hook were moved here out of the dotfiles so they're installable as a plugin.
+Extracted from Kyle's `~/.claude/` (the Juliet dotfiles). These skills/hook were
+moved here out of the dotfiles so they're installable as a plugin.
