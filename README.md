@@ -1,6 +1,6 @@
 # avegancafe
 
-Kyle's personal Claude Code toolkit — [beads](https://github.com/steveyegge/beads) (`bd`) issue-tracking workflows and a concurrency-aware working posture.
+Kyle's personal Claude Code toolkit — [beads](https://github.com/steveyegge/beads) (`bd`) issue-tracking workflows.
 
 ## Install
 
@@ -19,7 +19,6 @@ Then restart Claude Code. (The marketplace and plugin repos are private — inst
 |-------|-------------|
 | **beads-capture-logging** | Rapidly logging bugs/tasks/features/ideas into a `bd` tracker during a capture/triage session — spawns research subagents to author well-formed beads (type, parent epic, label, provenance, acceptance criteria, `file:line` refs). |
 | **writing-bead-titles** | Creating/updating a `bd` issue — keeps titles tight (drops redundant prefixes, parentheticals, slash-lists, file paths). |
-| **dinner-rush** | Something changed that you didn't do (file edits, commits, moved tracker issues) or the user says other agent sessions are running — sets a cautious, change-tolerant posture instead of "fixing" peer changes. |
 
 ### Hook
 

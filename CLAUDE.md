@@ -51,7 +51,6 @@ parent-epic-status hook. Distributed via the private
 .claude/patterns/                 # Durable repo patterns (see ToC above)
 skills/beads-capture-logging/     # Capture/triage logging workflow
 skills/writing-bead-titles/       # Tight bead-title guidance
-skills/dinner-rush/               # Concurrency-aware posture
 hooks/hooks.json                  # Registers the PostToolUse hook (auto-loaded)
 hooks/bd-epic-parent-reminder.sh  # The hook script (must stay executable)
 README.md                         # User-facing docs
