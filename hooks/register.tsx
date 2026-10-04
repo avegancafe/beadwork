@@ -92,15 +92,17 @@ async function refreshBeads($: any): Promise<void> {
 // session inside ~/workspace/<repo> would never see ~/workspace/.beads.
 async function findBeadsRoots($: any): Promise<string[]> {
   const roots: string[] = []
-  let dir = String(await $.session.cwd()).replace(/\/+$/, '')
-  while (dir) {
-    if (await $.fs.exists(`${dir}/.beads`)) roots.push(dir)
-    const parent = dir.slice(0, dir.lastIndexOf('/'))
-    if (parent === dir) break
-    dir = parent
+  let dir = String(await $.session.cwd()).replace(/\/+$/, '') || '/'
+  for (;;) {
+    if (await $.fs.exists(beadsDir(dir))) roots.push(dir)
+    if (dir === '/') break
+    const cut = dir.lastIndexOf('/')
+    dir = cut <= 0 ? '/' : dir.slice(0, cut)
   }
   return roots
 }
+
+const beadsDir = (root: string) => (root === '/' ? '/.beads' : `${root}/.beads`)
 
 // bd's "this isn't a tracker" answers: ~/.beads is bd's machine-wide state dir,
 // not a workspace, and must not show up as an error group.
@@ -114,7 +116,7 @@ async function listTracker($: any, root: string): Promise<BeadGroup | undefined>
     // BEADS_DIR pins bd to this tracker even if the shell exports another one.
     const { exitCode, stdout, stderr } = await $.process.run(
       ['bd', 'list', '--readonly', '--status=open,in_progress', '--json'],
-      { cwd: root, env: { BEADS_DIR: `${root}/.beads` }, timeoutMs: 15_000 },
+      { cwd: root, env: { BEADS_DIR: beadsDir(root) }, timeoutMs: 15_000 },
     )
     if (exitCode !== 0) {
       const said = `${stderr}\n${stdout}`
