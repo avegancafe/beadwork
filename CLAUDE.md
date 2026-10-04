@@ -7,12 +7,16 @@ Guidance for Claude Code when working **on this repository** (developing/maintai
 ## ⚠️ CRITICAL — read before any change
 
 1. **Bump the version on EVERY change to this repo.** Edit `version` in
-   [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) (semver), add a
-   matching entry to [`CHANGELOG.md`](CHANGELOG.md), **and** update the
-   `beadwork` entry's `version` in the marketplace repo
-   (`avegancafe/avegancafe-marketplace` → `.claude-plugin/marketplace.json`).
-   These three must always agree. No "trivial" exception — docs-only changes bump
-   the patch version too.
+   [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) (semver) and add a
+   matching entry to [`CHANGELOG.md`](CHANGELOG.md). These two must always agree
+   (CI checks). No "trivial" exception — docs-only changes bump the patch version too.
+   **Don't touch the marketplace** — on merge to `main`,
+   [`.github/workflows/release.yml`](.github/workflows/release.yml) sends a
+   `plugin-released` dispatch and `avegancafe-marketplace` updates the `beadwork`
+   entry, its own version, and its CHANGELOG by itself. That needs this repo's
+   `MARKETPLACE_DISPATCH_TOKEN` secret (fine-grained PAT, `avegancafe-marketplace`
+   only, Contents: read & write); a failed `release.yml` run means the marketplace
+   was NOT updated.
 2. **`hooks/hooks.json` is auto-loaded.** Do NOT also reference it from
    `plugin.json` (`manifest.hooks`) — that triggers a "Duplicate hooks file
    detected" error.

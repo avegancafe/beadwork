@@ -9,10 +9,9 @@ distributed through the `avegancafe/avegancafe-marketplace`.
 
 1. `version` in [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) (semver)
 2. A new entry in [`CHANGELOG.md`](CHANGELOG.md)
-3. The `beadwork` entry's `version` in the marketplace repo
-   (`avegancafe/avegancafe-marketplace` → `.claude-plugin/marketplace.json`)
 
-These three values must always match.
+These two must match (CI checks). The marketplace's `beadwork` entry updates itself
+after merge — `.github/workflows/release.yml` notifies `avegancafe-marketplace`.
 
 ## Local development
 

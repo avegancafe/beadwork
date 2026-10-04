@@ -6,6 +6,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.0.4] - 2026-10-04
 
+### Added
+- `.github/workflows/release.yml`: on a version change on `main`, sends `plugin-released` to `avegancafe-marketplace`, which updates the `beadwork` entry itself. Needs the `MARKETPLACE_DISPATCH_TOKEN` secret.
+
 ### Fixed
 - Pane: beads went blank (*No beads tracker above this folder*) after a shell `cd` moved the session's cwd outside the project (e.g. into `~/.config/...`). The `.beads` walk now also starts from the session's project root, which a shell `cd` doesn't move; results are deduped, cwd's trackers first.
 
