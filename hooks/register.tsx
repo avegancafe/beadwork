@@ -87,11 +87,30 @@ async function refreshBeads($: any): Promise<void> {
   }
 }
 
+// bd stops looking for .beads at the nearest git root, so a session that cd'd
+// into a nested repo (~/workspace/<repo> under a ~/workspace/.beads) misses it.
+// Walk up from the session's cwd ourselves and run bd where .beads lives.
+async function findBeadsRoot($: any): Promise<string | undefined> {
+  let dir = String(await $.session.cwd()).replace(/\/+$/, '')
+  while (dir) {
+    if (await $.fs.exists(`${dir}/.beads`)) return dir
+    const parent = dir.slice(0, dir.lastIndexOf('/'))
+    if (parent === dir) break
+    dir = parent
+  }
+  return undefined
+}
+
 async function probeBeads($: any): Promise<void> {
   try {
+    const root = await findBeadsRoot($)
+    if (root === undefined) {
+      await update($, beads, b => ({ ...b, items: [], error: 'No .beads above this folder', refreshedAt: Date.now() }))
+      return
+    }
     const { exitCode, stdout, stderr } = await $.process.run(
       ['bd', 'list', '--status=open,in_progress', '--json'],
-      { timeoutMs: 15_000 },
+      { cwd: root, timeoutMs: 15_000 },
     )
     if (exitCode !== 0) {
       const why = (stderr || stdout).split('\n')[0] || `bd exited ${exitCode}`
