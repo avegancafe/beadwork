@@ -4,6 +4,11 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-10-04
+
+### Added
+- Pane: beads nest under their epic inside each tracker group — loose beads first, then each epic as a `▾` sub-heading with its open children indented beneath. Any open bead with open children heads its own group; a bead whose parent isn't open in that tracker shows loose. An epic with nothing open under it says so. The tracker summary now counts work beads and epics separately (`1 active, 3 open, 2 epics`).
+
 ## [2.0.6] - 2026-10-04
 
 ### Fixed

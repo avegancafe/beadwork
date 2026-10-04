@@ -18,7 +18,7 @@ Then restart Claude Code. (The marketplace and plugin repos are private — inst
 A right-hand pane (a Claude Code mod: `hooks/register.tsx`) that's always open and always says what it knows:
 
 - **Claude tasks** — Claude Code's own task list (the one ctrl+t shows), read via the `TaskList` tool after every `TaskCreate`/`TaskUpdate`. Explicit states: *none*, *N/M done*, or *unavailable here* (sessions without task tools, e.g. the desktop Code tab).
-- **Beads** — open + in-progress beads, **grouped by tracker**: every `.beads` from the session's cwd up to `/`, nearest first (e.g. `~/workspace/<repo>` then `~/workspace`). In-progress first, then by priority. Refreshes every 10 s and right after any `bd` command Claude runs. Non-tracker `.beads` folders (like `~/.beads`) are skipped.
+- **Beads** — open + in-progress beads, **grouped by tracker**: every `.beads` from the session's cwd up to `/`, nearest first (e.g. `~/workspace/<repo>` then `~/workspace`). Within a tracker, beads **nest under their epic**: loose beads first, then each epic as a magenta `▾` sub-heading with its open children indented beneath (an epic with nothing open under it says so — a nudge to close it). A bead whose parent is closed or lives in another tracker shows loose. In-progress first, then by priority, at every level. Refreshes every 10 s and right after any `bd` command Claude runs. Non-tracker `.beads` folders (like `~/.beads`) are skipped.
 
 Opens itself at session start (terminal: from 144 columns); `/beadwork` opens it at any width.
 
