@@ -1,14 +1,14 @@
 import { atom, read, update } from 'claude-code'
 import type { Register } from 'claude-code'
 
-import type { Bead, BeadState, Task, TaskState, TaskStatus } from '../types'
+import type { Bead, BeadGroup, BeadState, Task, TaskState, TaskStatus } from '../types'
 
 const PANE = 'beadwork'
 const BEADS_EVERY_MS = 10_000
 const TASK_TOOLS = ['TaskCreate', 'TaskUpdate', 'TodoWrite']
 
 const tasks = atom({ plugin: 'beadwork', key: 'tasks' } as const, { available: null, list: [] } as TaskState)
-const beads = atom({ plugin: 'beadwork', key: 'beads' } as const, { items: [] } as BeadState)
+const beads = atom({ plugin: 'beadwork', key: 'beads' } as const, { groups: [] } as BeadState)
 
 const MARK: Record<TaskStatus, string> = { pending: '☐', in_progress: '◐', completed: '☒' }
 const asStatus = (s: unknown): TaskStatus => (s === 'in_progress' || s === 'completed' ? s : 'pending')
@@ -87,16 +87,43 @@ async function refreshBeads($: any): Promise<void> {
   }
 }
 
-async function probeBeads($: any): Promise<void> {
+// Every folder from the session's cwd up to / that holds a `.beads`, nearest
+// first. We walk ourselves because bd stops at the nearest git root, so a
+// session inside ~/workspace/<repo> would never see ~/workspace/.beads.
+async function findBeadsRoots($: any): Promise<string[]> {
+  const roots: string[] = []
+  let dir = String(await $.session.cwd()).replace(/\/+$/, '') || '/'
+  for (;;) {
+    if (await $.fs.exists(beadsDir(dir))) roots.push(dir)
+    if (dir === '/') break
+    const cut = dir.lastIndexOf('/')
+    dir = cut <= 0 ? '/' : dir.slice(0, cut)
+  }
+  return roots
+}
+
+const beadsDir = (root: string) => (root === '/' ? '/.beads' : `${root}/.beads`)
+
+// bd's "this isn't a tracker" answers: ~/.beads is bd's machine-wide state dir,
+// not a workspace, and must not show up as an error group.
+const NOT_A_TRACKER = /no (active )?beads (workspace|database)/i
+
+const homeLabel = (root: string) => root.replace(/^\/(Users|home)\/[^/]+/, '~') || '/'
+
+async function listTracker($: any, root: string): Promise<BeadGroup | undefined> {
+  const label = homeLabel(root)
   try {
+    // BEADS_DIR pins bd to this tracker even if the shell exports another one.
     const { exitCode, stdout, stderr } = await $.process.run(
-      ['bd', 'list', '--status=open,in_progress', '--json'],
-      { timeoutMs: 15_000 },
+      ['bd', 'list', '--readonly', '--status=open,in_progress', '--json'],
+      { cwd: root, env: { BEADS_DIR: beadsDir(root) }, timeoutMs: 15_000 },
     )
     if (exitCode !== 0) {
-      const why = (stderr || stdout).split('\n')[0] || `bd exited ${exitCode}`
-      await update($, beads, b => ({ ...b, items: [], error: why, refreshedAt: Date.now() }))
-      return
+      const said = `${stderr}\n${stdout}`
+      if (NOT_A_TRACKER.test(said)) return undefined
+      const lines = said.split('\n').filter(l => l.trim())
+      const why = lines.find(l => /error/i.test(l)) ?? lines[0] ?? `bd exited ${exitCode}`
+      return { root, label, items: [], error: why }
     }
     const items: Bead[] = (JSON.parse(stdout || '[]') as any[]).map(b => ({
       id: String(b.id),
@@ -105,10 +132,22 @@ async function probeBeads($: any): Promise<void> {
       priority: Number(b.priority ?? 4),
       type: String(b.issue_type ?? 'task'),
     }))
-    await update($, beads, () => ({ items, refreshedAt: Date.now() }))
+    return { root, label, items }
   } catch (err) {
-    await update($, beads, b => ({ ...b, error: `bd unavailable: ${String(err).slice(0, 80)}` }))
+    return { root, label, items: [], error: `bd unavailable: ${String(err).slice(0, 80)}` }
   }
+}
+
+async function probeBeads($: any): Promise<void> {
+  const roots = await findBeadsRoots($)
+  const found = await Promise.all(roots.map(root => listTracker($, root)))
+  const groups = found.filter((g): g is BeadGroup => g !== undefined)
+  $.ui.log(`beads: ${roots.length} .beads found, ${groups.length} trackers: ${groups.map(g => `${g.label}=${g.error ? 'ERR' : g.items.length}`).join(', ')}`, { to: 'debug' })
+  await update($, beads, () => ({
+    groups,
+    error: groups.length === 0 ? 'No beads tracker above this folder' : undefined,
+    refreshedAt: Date.now(),
+  }))
 }
 
 export const register: Register = on => {
@@ -157,11 +196,12 @@ export const register: Register = on => {
       : t.list.length === 0 ? 'Claude tasks · none'
       : `Claude tasks · ${done}/${t.list.length} done`
 
-    const sorted = [...b.items].sort(
-      (x, y) => Number(y.status === 'in_progress') - Number(x.status === 'in_progress') || x.priority - y.priority,
-    )
-    const active = sorted.filter(x => x.status === 'in_progress').length
-    const beadRoom = Math.max(1, rows - taskRoom - 5)
+    const byActive = (x: Bead, y: Bead) =>
+      Number(y.status === 'in_progress') - Number(x.status === 'in_progress') || x.priority - y.priority
+    const groups = b.groups.map(g => ({ ...g, items: [...g.items].sort(byActive) }))
+    // Rows left after the task section, split evenly; each group spends one on its header.
+    const beadRoom = Math.max(2, rows - taskRoom - 5)
+    const perGroup = Math.max(1, Math.floor(beadRoom / Math.max(1, groups.length)) - 1)
 
     return (
       <Box flexDirection="column">
@@ -181,21 +221,33 @@ export const register: Register = on => {
         ))}
 
         <Text> </Text>
-        <Text bold>
-          {b.error ? 'Beads · unavailable' : `Beads · ${active} active, ${b.items.length - active} open`}
-        </Text>
-        {b.error && <Text dimColor wrap="truncate-end">{b.error}</Text>}
-        {!b.error && b.items.length === 0 && <Text dimColor>{b.refreshedAt ? 'Nothing open.' : 'Loading…'}</Text>}
-        {sorted.slice(0, beadRoom).map(x => (
-          <Text
-            wrap="truncate-end"
-            bold={x.status === 'in_progress'}
-            color={x.status === 'in_progress' ? 'yellow' : undefined}
-          >
-            {x.status === 'in_progress' ? '◐' : '○'} <Text dimColor>P{x.priority}</Text> {x.title} <Text dimColor>{x.id}</Text>
-          </Text>
-        ))}
-        {sorted.length > beadRoom && <Text dimColor>…{sorted.length - beadRoom} more</Text>}
+        <Text bold>Beads</Text>
+        {b.error && <Text dimColor>{b.error}</Text>}
+        {!b.error && groups.length === 0 && <Text dimColor>Loading…</Text>}
+        {groups.map(g => {
+          const active = g.items.filter(x => x.status === 'in_progress').length
+          const shown = g.items.slice(0, g.items.length > perGroup ? perGroup - 1 : perGroup)
+          return (
+            <Box flexDirection="column">
+              <Text wrap="truncate-end">
+                <Text bold color="cyan">{g.label}</Text>
+                <Text dimColor>{g.error ? ' · unavailable' : ` · ${active} active, ${g.items.length - active} open`}</Text>
+              </Text>
+              {g.error && <Text dimColor wrap="truncate-end">  {g.error}</Text>}
+              {!g.error && g.items.length === 0 && <Text dimColor>  Nothing open.</Text>}
+              {shown.map(x => (
+                <Text
+                  wrap="truncate-end"
+                  bold={x.status === 'in_progress'}
+                  color={x.status === 'in_progress' ? 'yellow' : undefined}
+                >
+                  {'  '}{x.status === 'in_progress' ? '◐' : '○'} <Text dimColor>P{x.priority}</Text> {x.title} <Text dimColor>{x.id}</Text>
+                </Text>
+              ))}
+              {shown.length < g.items.length && <Text dimColor>  …{g.items.length - shown.length} more</Text>}
+            </Box>
+          )
+        })}
       </Box>
     )
   })

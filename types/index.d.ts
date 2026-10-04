@@ -4,8 +4,10 @@ export type Task = { id: string; subject: string; status: TaskStatus; activeForm
 export type TaskState = { available: boolean | null; list: Task[] }
 
 export type Bead = { id: string; title: string; status: string; priority: number; type: string }
-/** `error` is set when bd failed (e.g. no beads workspace for this cwd). */
-export type BeadState = { items: Bead[]; error?: string; refreshedAt?: number }
+/** One beads tracker: the folder holding its `.beads`, and what bd listed there. */
+export type BeadGroup = { root: string; label: string; items: Bead[]; error?: string }
+/** Trackers nearest the session's cwd first; `error` when none was found at all. */
+export type BeadState = { groups: BeadGroup[]; error?: string; refreshedAt?: number }
 
 declare module 'claude-code' {
   interface PluginState {
