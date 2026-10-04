@@ -33,26 +33,61 @@ const parseTaskList = (result: any, text: string): Task[] => {
     .map(m => ({ id: m[1], status: asStatus(m[2]), subject: m[3].trim() }))
 }
 
-let refreshingTasks: Promise<void> | undefined
+// Single-flight with one trailing rerun: a trigger that lands while a probe is
+// in flight queues exactly one more probe, so the last change always shows.
+let tasksRunning = false
+let tasksAgain = false
 
-function refreshTasks($: any): Promise<void> {
-  return (refreshingTasks ??= (async () => {
-    try {
-      const ran = await $.tool.call({ tool: 'TaskList' })
-      const list = ran.deny === undefined && !ran.isError ? parseTaskList(ran.result, ran.text ?? '') : []
-      $.ui.log(`TaskList → ${list.length} tasks; raw: ${JSON.stringify(ran.result ?? ran.text ?? ran.deny).slice(0, 400)}`, { to: 'debug' })
-      await update($, tasks, () => ({ available: ran.deny === undefined, list }))
-    } catch (err) {
-      // Rejects when this session has no TaskList tool (e.g. the desktop Code tab).
-      $.ui.log(`TaskList unavailable: ${String(err)}`, { to: 'debug' })
-      await update($, tasks, () => ({ available: false, list: [] }))
-    } finally {
-      refreshingTasks = undefined
-    }
-  })())
+async function refreshTasks($: any): Promise<void> {
+  if (tasksRunning) {
+    tasksAgain = true
+    return
+  }
+  tasksRunning = true
+  try {
+    do {
+      tasksAgain = false
+      await probeTasks($)
+    } while (tasksAgain)
+  } finally {
+    tasksRunning = false
+  }
 }
 
+async function probeTasks($: any): Promise<void> {
+  try {
+    const ran = await $.tool.call({ tool: 'TaskList' })
+    const isOk = ran.deny === undefined && !ran.isError
+    const list = isOk ? parseTaskList(ran.result, ran.text ?? '') : []
+    $.ui.log(`TaskList → ${list.length} tasks; raw: ${JSON.stringify(ran.result ?? ran.text ?? ran.deny).slice(0, 400)}`, { to: 'debug' })
+    await update($, tasks, () => ({ available: isOk, list }))
+  } catch (err) {
+    // Rejects when this session has no TaskList tool (e.g. the desktop Code tab).
+    $.ui.log(`TaskList unavailable: ${String(err)}`, { to: 'debug' })
+    await update($, tasks, () => ({ available: false, list: [] }))
+  }
+}
+
+let beadsRunning = false
+let beadsAgain = false
+
 async function refreshBeads($: any): Promise<void> {
+  if (beadsRunning) {
+    beadsAgain = true
+    return
+  }
+  beadsRunning = true
+  try {
+    do {
+      beadsAgain = false
+      await probeBeads($)
+    } while (beadsAgain)
+  } finally {
+    beadsRunning = false
+  }
+}
+
+async function probeBeads($: any): Promise<void> {
   try {
     const { exitCode, stdout, stderr } = await $.process.run(
       ['bd', 'list', '--status=open,in_progress', '--json'],

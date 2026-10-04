@@ -4,6 +4,12 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2026-10-04
+
+### Fixed
+- Pane: a refresh triggered while a `TaskList` or `bd list` probe is in flight now queues one follow-up probe instead of being dropped, so the pane can't stick on a stale list.
+- Pane: a `TaskList` call that returns an error now shows *unavailable here* rather than *none*.
+
 ## [2.0.0] - 2026-10-04
 
 ### Changed

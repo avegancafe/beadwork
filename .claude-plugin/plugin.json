@@ -1,6 +1,6 @@
 {
   "name": "beadwork",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Everything for working in beads (bd): a live pane showing Claude's task list and your open beads, capture/triage logging, tight bead titles, and a hook that surfaces parent-epic status after bd state changes.",
   "author": {
     "name": "Kyle Holzinger",
