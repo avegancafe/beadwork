@@ -4,6 +4,15 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-10-04
+
+### Changed
+- **Renamed the plugin `avegancafe` → `beadwork`** (repo `avegancafe/avegancafe-plugin` → `avegancafe/beadwork`). Everything in it was beads tooling, so it's now a dedicated beads plugin instead of a grab-bag. Reinstall as `beadwork@avegancafe-marketplace`.
+- Skills renamed to one scheme, `<gerund>-<object>` under the `beadwork:` namespace: `beads-capture-logging` → `logging-captures`, `writing-bead-titles` → `writing-titles`. Hook script `bd-epic-parent-reminder.sh` → `epic-parent-reminder.sh`.
+
+### Added
+- **Beadwork pane** (`hooks/register.tsx`, `/beadwork`): a Claude Code mod showing Claude's task list (via `TaskList`, with explicit none/unavailable states) and open + in-progress beads (`bd list --json`, refreshed every 10 s and after `bd` commands).
+
 ## [1.0.4] - 2026-06-30
 
 ### Changed

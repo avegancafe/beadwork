@@ -1,5 +1,5 @@
 ---
-name: writing-bead-titles
+name: writing-titles
 description: Use when creating or updating a beads (bd) issue — running bd create, bd quick, bd update, or drafting/renaming an epic or task title. Especially when a title is getting long or carries parentheticals, slash-lists, "+"-joined clauses, file paths, or a redundant project/epic prefix.
 ---
 
