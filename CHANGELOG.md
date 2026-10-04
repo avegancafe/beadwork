@@ -6,8 +6,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.0.3] - 2026-10-04
 
+### Added
+- Pane: **beads grouped by tracker.** The pane walks up from the session's cwd, collects every `.beads` on the way, and shows one group per tracker (nearest first, labelled by folder, e.g. `~/workspace/<repo>` above `~/workspace`), each with its own active/open counts and an even share of the rows. `bd` runs per tracker with `BEADS_DIR` pinned and `--readonly`, so an exported `BEADS_DIR` can't merge them.
+
 ### Fixed
-- Pane: beads showed *no beads database found* when the session's cwd was a nested git repo (e.g. `~/workspace/<repo>` under `~/workspace/.beads`) — `bd` stops searching at the git root. The pane now walks up from the cwd to the nearest `.beads` and runs `bd` there; with none found it says *No .beads above this folder*.
+- Pane: beads showed *no beads database found* when the session's cwd was a nested git repo (e.g. `~/workspace/<repo>` under `~/workspace/.beads`) — `bd` stops searching at the git root. Covered by the walk above.
+- `.beads` folders that aren't trackers (e.g. `~/.beads`, bd's machine-wide state) are skipped instead of shown as errors.
 
 ## [2.0.2] - 2026-10-04
 
