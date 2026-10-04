@@ -29,6 +29,22 @@ jobs:
           out=$(echo '{"tool_input":{"command":"ls"}}' | hooks/epic-parent-reminder.sh)
           test -z "$out" || { echo "hook printed output for a non-bd command: $out"; exit 1; }
 
+      - name: Hook resolves multi-segment ids to their parent epic
+        run: |
+          stub=$(mktemp -d)
+          cat > "$stub/bd" <<'STUB'
+          #!/usr/bin/env bash
+          case "$2" in
+            ws-abc-d12) echo '{"id":"ws-abc-d12","parent":"ws-abc"}' ;;
+            ws-abc) echo '{"id":"ws-abc","status":"open"}' ;;
+            *) exit 1 ;;
+          esac
+          STUB
+          chmod +x "$stub/bd"
+          out=$(echo '{"tool_input":{"command":"bd update ws-abc-d12 --status in_progress"}}' | PATH="$stub:$PATH" hooks/epic-parent-reminder.sh)
+          echo "$out"
+          grep -q 'parent epic ws-abc \[status: open\]' <<<"$out"
+
       - name: Version matches CHANGELOG
         run: |
           manifest=$(jq -r .version .claude-plugin/plugin.json)

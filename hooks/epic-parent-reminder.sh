@@ -16,8 +16,8 @@ cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // ""' 2>/dev/null)
 # Only act on state-changing bd verbs.
 printf '%s' "$cmd" | grep -Eq 'bd[[:space:]]+(update|close|reopen)' || exit 0
 
-# Candidate issue ids referenced in the command (e.g. home-6z4, home-ep1.2).
-ids=$(printf '%s' "$cmd" | grep -oE '[a-z][a-z0-9]*-[a-z0-9]+(\.[0-9]+)?' | sort -u)
+# Candidate issue ids referenced in the command (e.g. home-6z4, home-ep1.2, ws-fwr-f14).
+ids=$(printf '%s' "$cmd" | grep -oE '[a-z][a-z0-9]*(-[a-z0-9]+)+(\.[0-9]+)?' | sort -u)
 [ -z "$ids" ] && exit 0
 
 seen=""

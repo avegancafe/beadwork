@@ -4,6 +4,11 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.6] - 2026-10-04
+
+### Fixed
+- Parent-epic hook never fired for multi-segment ids like `ws-fwr-f14`: the id regex matched only the first two segments (`ws-fwr`, the epic itself), which has no parent. It now matches any number of `-segment`s.
+
 ## [2.0.5] - 2026-10-04
 
 ### Changed
