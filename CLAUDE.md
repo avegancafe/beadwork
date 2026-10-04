@@ -57,6 +57,8 @@ grab-bag plugin, whose contents were all beads tooling.)
 ```
 .claude-plugin/plugin.json        # Manifest (name, version, metadata, types). REQUIRED.
 .claude/patterns/                 # Durable repo patterns (see ToC above)
+.github/workflows/ci.yml          # validate, shellcheck, hook smoke test, version<->CHANGELOG
+.github/workflows/release.yml     # On a version change on main: notify the marketplace (rule 1)
 skills/logging-captures/          # Capture/triage logging workflow
 skills/writing-titles/            # Tight bead-title guidance
 hooks/hooks.json                  # modules: [register.tsx] + classic PostToolUse hook
@@ -80,6 +82,8 @@ repeat "bead" — the `beadwork:` namespace already says it.
   gets matched. Edit it deliberately; keep it specific about *when* to use the skill.
 - After any change, follow the version-bump rule above.
 - Check the pane with `claude plugin validate .` before committing.
+- Pane code: every helper that takes `$` must be a **top-level** function
+  declaration — `claude plugin validate` refuses `$` passed to a nested closure.
 
 ## Testing changes locally
 
