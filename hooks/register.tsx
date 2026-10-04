@@ -87,17 +87,21 @@ async function refreshBeads($: any): Promise<void> {
   }
 }
 
-// Every folder from the session's cwd up to / that holds a `.beads`, nearest
-// first. We walk ourselves because bd stops at the nearest git root, so a
-// session inside ~/workspace/<repo> would never see ~/workspace/.beads.
+// Every folder holding a `.beads`, walking up from the session's cwd and then
+// from its project root (deduped, nearest first). We walk ourselves because bd
+// stops at the nearest git root, so a session inside ~/workspace/<repo> would
+// never see ~/workspace/.beads. The root matters because a shell `cd` moves the
+// cwd (e.g. into ~/.config/...) but not the project root.
 async function findBeadsRoots($: any): Promise<string[]> {
   const roots: string[] = []
-  let dir = String(await $.session.cwd()).replace(/\/+$/, '') || '/'
-  for (;;) {
-    if (await $.fs.exists(beadsDir(dir))) roots.push(dir)
-    if (dir === '/') break
-    const cut = dir.lastIndexOf('/')
-    dir = cut <= 0 ? '/' : dir.slice(0, cut)
+  for (const start of [await $.session.cwd(), await $.session.root()]) {
+    let dir = String(start).replace(/\/+$/, '') || '/'
+    for (;;) {
+      if (!roots.includes(dir) && (await $.fs.exists(beadsDir(dir)))) roots.push(dir)
+      if (dir === '/') break
+      const cut = dir.lastIndexOf('/')
+      dir = cut <= 0 ? '/' : dir.slice(0, cut)
+    }
   }
   return roots
 }
