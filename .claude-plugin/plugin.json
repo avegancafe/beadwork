@@ -1,13 +1,14 @@
 {
-  "name": "avegancafe",
-  "version": "1.0.4",
-  "description": "My portable grab-bag of personal Claude Code tooling — a catch-all home for the skills and hooks I carry from machine to machine. Currently: beads (bd) issue-tracking workflows (rapid capture/triage logging, tight bead titles) plus a PostToolUse hook that surfaces parent-epic status after bd state changes.",
+  "name": "beadwork",
+  "version": "2.0.1",
+  "description": "Everything for working in beads (bd): a live pane showing Claude's task list and your open beads, capture/triage logging, tight bead titles, and a hook that surfaces parent-epic status after bd state changes.",
   "author": {
     "name": "Kyle Holzinger",
     "url": "https://github.com/avegancafe"
   },
-  "homepage": "https://github.com/avegancafe/avegancafe-plugin",
-  "repository": "https://github.com/avegancafe/avegancafe-plugin",
+  "homepage": "https://github.com/avegancafe/beadwork",
+  "repository": "https://github.com/avegancafe/beadwork",
   "license": "MIT",
-  "keywords": ["personal", "grab-bag", "toolkit", "beads", "bd", "issue-tracking", "workflow"]
+  "keywords": ["beads", "bd", "issue-tracking", "tasks", "pane", "mod", "workflow"],
+  "types": "./types/index.d.ts"
 }

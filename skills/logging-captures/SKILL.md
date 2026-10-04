@@ -1,5 +1,5 @@
 ---
-name: beads-capture-logging
+name: logging-captures
 description: >-
   Use when rapidly logging bugs, tasks, features, or ideas into a beads (bd) issue
   tracker during a capture/triage session — ESPECIALLY when the implementation lives

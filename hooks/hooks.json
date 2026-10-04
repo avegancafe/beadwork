@@ -1,4 +1,5 @@
 {
+  "modules": ["./register.tsx"],
   "hooks": {
     "PostToolUse": [
       {
@@ -6,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/bd-epic-parent-reminder.sh\"",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/epic-parent-reminder.sh\"",
             "statusMessage": "Checking parent epic status"
           }
         ]

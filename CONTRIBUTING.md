@@ -1,4 +1,4 @@
-# Contributing to avegancafe
+# Contributing to beadwork
 
 This is my personal Claude Code plugin (beads workflows + a parent-epic hook),
 distributed through the `avegancafe/avegancafe-marketplace`.
@@ -9,7 +9,7 @@ distributed through the `avegancafe/avegancafe-marketplace`.
 
 1. `version` in [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) (semver)
 2. A new entry in [`CHANGELOG.md`](CHANGELOG.md)
-3. The `avegancafe` entry's `version` in the marketplace repo
+3. The `beadwork` entry's `version` in the marketplace repo
    (`avegancafe/avegancafe-marketplace` → `.claude-plugin/marketplace.json`)
 
 These three values must always match.
@@ -17,9 +17,9 @@ These three values must always match.
 ## Local development
 
 ```bash
-git clone git@github.com:avegancafe/avegancafe-plugin.git
+git clone git@github.com:avegancafe/beadwork.git
 /plugin marketplace add /path/to/avegancafe-marketplace
-/plugin install avegancafe@avegancafe-marketplace
+/plugin install beadwork@avegancafe-marketplace
 # restart Claude Code; trigger a `bd` state change to verify the hook fires.
 ```
 
