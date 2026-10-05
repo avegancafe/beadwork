@@ -38,6 +38,20 @@ const parseTaskList = (result: any, text: string): Task[] => {
 let tasksRunning = false
 let tasksAgain = false
 
+// The pane opens only on `/beadwork`, so nothing probes until it's up. Ask the
+// engine, not a module flag: a hot reload keeps the pane but resets the module.
+async function paneIsOpen($: any): Promise<boolean> {
+  return (await $.ui.panes()).some((p: any) => p.id === PANE)
+}
+
+async function refreshTasksIfOpen($: any): Promise<void> {
+  if (await paneIsOpen($)) await refreshTasks($)
+}
+
+async function refreshBeadsIfOpen($: any): Promise<void> {
+  if (await paneIsOpen($)) await refreshBeads($)
+}
+
 async function refreshTasks($: any): Promise<void> {
   if (tasksRunning) {
     tasksAgain = true
@@ -188,10 +202,10 @@ export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     const started = await next(e)
     await $.command.register({ name: 'beadwork', description: 'Open the beadwork pane: Claude tasks + open beads' })
-    void $.ui.open({ id: PANE, title: 'Beadwork' })
-    void refreshTasks($)
-    void refreshBeads($)
-    $.clock.every(BEADS_EVERY_MS, () => void refreshBeads($))
+    // No auto-open. A pane left up across a reload/resume still gets refreshed.
+    void refreshTasksIfOpen($)
+    void refreshBeadsIfOpen($)
+    $.clock.every(BEADS_EVERY_MS, () => void refreshBeadsIfOpen($))
     return started
   })
 
@@ -205,14 +219,14 @@ export const register: Register = on => {
   for (const tool of TASK_TOOLS) {
     on('tool.call', { tool }, async ($, e, next) => {
       const ran = await next(e)
-      void refreshTasks($)
+      void refreshTasksIfOpen($)
       return ran
     })
   }
 
   on('tool.call', { tool: 'Bash' }, async ($, e, next) => {
     const ran = await next(e)
-    if (/(^|[\s;&|(])bd\s/.test(String(e.command))) void refreshBeads($)
+    if (/(^|[\s;&|(])bd\s/.test(String(e.command))) void refreshBeadsIfOpen($)
     return ran
   })
 
