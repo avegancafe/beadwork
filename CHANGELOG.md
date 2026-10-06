@@ -4,6 +4,11 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-10-05
+
+### Changed
+- Pane: no longer opens itself at session start — run `/beadwork` to open it. Until it's open nothing probes: the 10 s `bd list` poll, the startup refresh, and the refreshes after `bd` / task-tool calls all check `$.ui.panes()` first and skip when the pane isn't up. A pane kept open across a hot reload or resume keeps refreshing.
+
 ## [2.1.0] - 2026-10-04
 
 ### Added
