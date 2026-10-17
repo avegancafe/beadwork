@@ -10,8 +10,11 @@ export type BeadGroup = { root: string; label: string; items: Bead[]; error?: st
 /** Trackers nearest the session's cwd first; `error` when none was found at all. */
 export type BeadState = { groups: BeadGroup[]; error?: string; refreshedAt?: number }
 
+/** Keys of the pane's collapsed sections: `tasks`, `beads`, `group:<root>`, `epic:<root>:<id>`. */
+export type Collapsed = string[]
+
 declare module 'claude-code' {
   interface PluginState {
-    'beadwork': { tasks: TaskState; beads: BeadState }
+    'beadwork': { tasks: TaskState; beads: BeadState; collapsed: Collapsed }
   }
 }

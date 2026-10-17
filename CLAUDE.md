@@ -91,6 +91,9 @@ repeat "bead" — the `beadwork:` namespace already says it.
 /plugin marketplace add /Users/kyle/workspace/avegancafe-marketplace
 /plugin install beadwork@avegancafe-marketplace
 # or: claude --plugin-dir .   (hot-reloads the pane in an interactive session)
+# desktop app: ~/.claude/settings.json env has CLAUDE_CODE_PLUGIN_DIRS including
+#   ~/workspace/beadwork plus CLAUDE_CODE_PLUGIN_DIR_WATCH=1 (hot reload), with
+#   beadwork@avegancafe-marketplace disabled so it doesn't load twice.
 # restart Claude Code; run a `bd` state change to verify the hook fires,
 # and exercise the skills via their trigger phrasing.
 ```
