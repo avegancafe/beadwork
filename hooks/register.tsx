@@ -209,6 +209,28 @@ function layoutTracker(items: Bead[], isFolded: (id: string) => boolean): Row[] 
   return rows
 }
 
+// Split `room` content lines among trackers by what each still needs after
+// folding: the smallest are filled first, and what they leave is shared by the
+// rest, so lines freed by a fold go to a tracker that is cut short.
+function allocateRows(needs: number[], room: number): number[] {
+  const out = needs.map(() => 0)
+  let left = Math.max(0, room)
+  let pending = needs.map((need, i) => ({ need, i })).sort((x, y) => x.need - y.need)
+  while (pending.length > 0) {
+    const share = Math.floor(left / pending.length)
+    const head = pending[0]!
+    if (head.need <= share) {
+      out[head.i] = head.need
+      left -= head.need
+      pending = pending.slice(1)
+      continue
+    }
+    for (const p of pending) out[p.i] = Math.max(1, share)
+    break
+  }
+  return out
+}
+
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     const started = await next(e)
@@ -271,11 +293,10 @@ export const register: Register = on => {
         rows: layoutTracker(g.items, id => isFolded(`epic:${g.root}:${id}`)),
       }
     })
-    // Rows left after the task section, split among the open groups; each group
-    // spends one on its header, a folded group only that.
-    const beadRoom = Math.max(2, rows - taskRoom - 5 - groups.filter(g => g.isFolded).length)
-    const openGroups = Math.max(1, groups.filter(g => !g.isFolded).length)
-    const perGroup = Math.max(1, Math.floor(beadRoom / openGroups) - 1)
+    // Rows left after the task section, less one header per group, split by
+    // each group's post-fold demand (a folded group needs nothing past its header).
+    const beadRoom = Math.max(groups.length, rows - taskRoom - 5 - groups.length)
+    const budgets = allocateRows(groups.map(g => (g.isFolded ? 0 : Math.max(1, g.rows.length))), beadRoom)
 
     return (
       <Box flexDirection="column">
@@ -309,11 +330,13 @@ export const register: Register = on => {
         </Button>
         {!beadsFolded && b.error && <Text dimColor>  {b.error}</Text>}
         {!beadsFolded && !b.error && groups.length === 0 && <Text dimColor>  Loading…</Text>}
-        {!beadsFolded && groups.map(g => {
+        {!beadsFolded && groups.map((g, i) => {
           const work = g.items.filter(x => x.type !== 'epic')
           const active = work.filter(x => x.status === 'in_progress').length
           const epics = g.items.length - work.length
-          const shown = g.rows.slice(0, g.rows.length > perGroup ? perGroup - 1 : perGroup)
+          const budget = budgets[i] ?? 1
+          // Over budget, the last line goes to "…N more".
+          const shown = g.rows.slice(0, g.rows.length > budget ? Math.max(1, budget - 1) : budget)
           return (
             <Box flexDirection="column">
               <Button key={g.key} plain onPress={fold(g.key)}>
