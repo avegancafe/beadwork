@@ -65,6 +65,7 @@ hooks/hooks.json                  # modules: [register.tsx] + classic PostToolUs
 hooks/register.tsx                # The pane (Claude tasks + open beads), /beadwork
 hooks/epic-parent-reminder.sh     # The hook script (must stay executable)
 types/index.d.ts                  # $.state contract for the pane
+tests/open-on-start.test.ts       # `claude plugin test .`: openOnStart opens the pane
 README.md                         # User-facing docs
 ```
 

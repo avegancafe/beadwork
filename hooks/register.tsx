@@ -231,21 +231,37 @@ function allocateRows(needs: number[], room: number): number[] {
   return out
 }
 
-export const register: Register = on => {
+async function openPane($: any): Promise<void> {
+  await $.ui.open({ id: PANE, title: 'Beadwork' })
+  void refreshTasks($)
+  void refreshBeads($)
+}
+
+// Only a terminal or the desktop app draws a pane; skip headless/remote runs.
+async function canDrawPane($: any): Promise<boolean> {
+  if ((await $.env.get('CLAUDE_CODE_REMOTE')) === 'true') return false
+  const surfaces: readonly string[] = await $.session.surfaces()
+  return surfaces.some(s => s === 'terminal' || s === 'desktop')
+}
+
+export const register: Register = (on, options) => {
   on('session.start', async ($, e, next) => {
     const started = await next(e)
     await $.command.register({ name: 'beadwork', description: 'Open the beadwork pane: Claude tasks + open beads' })
-    // No auto-open. A pane left up across a reload/resume still gets refreshed.
-    void refreshTasksIfOpen($)
-    void refreshBeadsIfOpen($)
+    // Auto-open only with the `openOnStart` option. A pane left up across a
+    // reload/resume is already open: just refresh it.
+    if (await paneIsOpen($)) {
+      void refreshTasks($)
+      void refreshBeads($)
+    } else if (options.openOnStart === true && (await canDrawPane($))) {
+      await openPane($)
+    }
     $.clock.every(BEADS_EVERY_MS, () => void refreshBeadsIfOpen($))
     return started
   })
 
   on('command.run', { command: 'beadwork' }, async $ => {
-    await $.ui.open({ id: PANE, title: 'Beadwork' })
-    void refreshTasks($)
-    void refreshBeads($)
+    await openPane($)
     return { text: 'Beadwork pane opened.' }
   })
 

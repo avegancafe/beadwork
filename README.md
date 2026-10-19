@@ -26,7 +26,7 @@ It's interactive — click, or focus the pane (ctrl+x tab) and use Tab/Enter:
 - **Press a bead** to copy its id.
 - **↻ refresh** (hotkey `r`) re-reads tasks and beads now.
 
-Opens only when you run `/beadwork` — never on its own at session start. Until then it does no background work (no `bd list` polling); once open it stays refreshed, including across a plugin reload.
+Opens when you run `/beadwork`. To have it open at every session start, turn on the **openOnStart** option (`/config` → beadwork, or in `settings.json`: `"pluginConfigs": { "beadwork@avegancafe-marketplace": { "options": { "openOnStart": true } } }`). Until it's open it does no background work (no `bd list` polling); once open it stays refreshed, including across a plugin reload.
 
 ### Skills
 
