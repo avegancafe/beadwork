@@ -4,6 +4,11 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2026-10-19
+
+### Added
+- `openOnStart` plugin option (`/config` → beadwork, or `pluginConfigs.beadwork.options.openOnStart` in settings): opens the pane at session start instead of waiting for `/beadwork`. Off by default; skipped where no terminal or desktop surface can draw a pane (headless, remote).
+
 ## [2.3.0] - 2026-10-16
 
 ### Added

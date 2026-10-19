@@ -1,6 +1,6 @@
 {
   "name": "beadwork",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Everything for working in beads (bd): a live pane showing Claude's task list and your open beads, capture/triage logging, tight bead titles, and a hook that surfaces parent-epic status after bd state changes.",
   "author": {
     "name": "Kyle Holzinger",
@@ -10,5 +10,13 @@
   "repository": "https://github.com/avegancafe/beadwork",
   "license": "MIT",
   "keywords": ["beads", "bd", "issue-tracking", "tasks", "pane", "mod", "workflow"],
-  "types": "./types/index.d.ts"
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "openOnStart": {
+      "type": "boolean",
+      "title": "Open the beadwork pane on session start",
+      "description": "Open the /beadwork pane (Claude tasks + open beads) whenever a session starts, instead of waiting for /beadwork.",
+      "default": false
+    }
+  }
 }
