@@ -47,7 +47,7 @@ See [`.claude/patterns/README.md`](.claude/patterns/README.md) for the conventio
 ## What this repo is
 
 **beadwork** — my Claude Code plugin for working in beads (`bd`): a live pane
-(mod), capture/triage skills, and a parent-epic hook. Distributed via the private
+(mod), capture/triage skills, and a parent-epic hook. Distributed via the public
 `avegancafe/avegancafe-marketplace` and installed with
 `/plugin install beadwork@avegancafe-marketplace`. (Formerly the `avegancafe`
 grab-bag plugin, whose contents were all beads tooling.)

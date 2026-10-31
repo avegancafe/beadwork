@@ -9,7 +9,7 @@ Everything I use for working in [beads](https://github.com/steveyegge/beads) (`b
 /plugin install beadwork@avegancafe-marketplace
 ```
 
-Then restart Claude Code. (The marketplace and plugin repos are private — installation uses your GitHub SSH access.)
+Then restart Claude Code. (The marketplace and this repo are public, so anyone can install it; no GitHub SSH key needed.)
 
 ## What's inside
 
